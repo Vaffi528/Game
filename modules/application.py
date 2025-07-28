@@ -1,6 +1,8 @@
 from .package import *
 from .screens.greetscreen import GreetScreen
 from .screens.settingsscreen import SettingsScreen
+from .screens.playscreen import PlayScreen
+from .screens.pausescreen import PauseScreen
 from .widgets import SharedWidgets
 
 class Main(QWidget):
@@ -14,8 +16,10 @@ class Main(QWidget):
         self.data = self.load()
         self.widgets = SharedWidgets(**self.data)
         self.screens = {'Start': GreetScreen(self.widgets, self.width(), self.height()),
-                        'Settings': SettingsScreen(self.widgets, self.width(), self.height())}
-        self.indexes = {'Start': 0, 'Settings': 1, 'Ok':0}
+                        'Settings': SettingsScreen(self.widgets, self.width(), self.height()),
+                        'Play': PlayScreen(self.widgets, self.width(), self.height()),
+                        '||':PauseScreen(self.widgets, self.width(), self.height())}
+        self.indexes = {'Start': 0, 'Settings': 1, 'Play': 2, '||': 3,}
         self.current_screen = 'Start'
         self.stacked_layout = QStackedLayout()
         for widget in list(self.screens.values()):
@@ -23,8 +27,6 @@ class Main(QWidget):
 
     def updateScreen(self, text):
         self.current_screen = text
-        if text == 'Ok':
-            self.data = self.load()
         self.stacked_layout.setCurrentIndex(self.indexes[self.current_screen])
 
     def keyPressEvent(self, event):
@@ -47,9 +49,13 @@ class Main(QWidget):
                 json.dump(data, file)
             return data
 
+    def dump(self):
+        with open('data/data.json', "w", encoding='utf-8') as file:
+            json.dump(self.data, file)
+
     def run(self, app):
         for screen in list(self.screens.values()):
-            screen.subscribe(update_screen=self.updateScreen, **self.data)
+            screen.subscribe(self)
 
         self.setLayout(self.stacked_layout)
         self.show()

@@ -89,38 +89,38 @@ class SettingsScreen(Screen):
         if self.widgets.sliders[2].value() > value:
             self.widgets.sliders[2].setValue(value)
 
-    def save_changes(self, update_screen):
-        data = dict()
+    def save_changes(self, main):
         for i, key in enumerate(['n', 'k', 'a','b']):
-            data[key]=self.widgets.sliders[i].value()
-        data['computer']=self.widgets.play_computer.isChecked()
-        data['difficulty'] = int(self.widgets.difficulty_combo.currentText())
+            main.data[key]=self.widgets.sliders[i].value()
+
+        main.data['computer']=self.widgets.play_computer.isChecked()
+        main.data['difficulty'] = int(self.widgets.difficulty_combo.currentText())
+        main.data['gamemode'] = self.widgets.modes.index(self.widgets.mode_group.checkedButton())
         
-        data['gamemode'] = self.widgets.modes.index(self.widgets.mode_group.checkedButton())
-        with open('data/data.json', "w", encoding='utf-8') as file:
-            json.dump(data, file)
+        self.widgets.update_sticks(main.data['n'])
+        
+        main.dump()
+        main.updateScreen('Start')
 
-        update_screen('Ok')
-
-    def cancel_changes(self, **data):
+    def cancel_changes(self, main):
         for i, key in enumerate(['n', 'k', 'a','b']):
-            self.widgets.sliders[i].setValue(data[key])
+            self.widgets.sliders[i].setValue(main.data[key])
 
-        self.widgets.sliderlabels[1][2].setText(str(data['n']))
-        self.widgets.sliderlabels[2][2].setText(str(data['b']))
-        self.widgets.sliderlabels[3][0].setText(str(data['a']))
-        self.widgets.sliderlabels[3][2].setText(str(data['n']))
+        self.widgets.sliderlabels[1][2].setText(str(main.data['n']))
+        self.widgets.sliderlabels[2][2].setText(str(main.data['b']))
+        self.widgets.sliderlabels[3][0].setText(str(main.data['a']))
+        self.widgets.sliderlabels[3][2].setText(str(main.data['n']))
 
-        self.widgets.play_computer.setChecked(data['computer'])
-        self.widgets.difficulty_combo.setEnabled(data['computer'])
-        self.widgets.difficulty_combo.setCurrentText(f"{data['difficulty']}")
-        self.widgets.modes[data['gamemode']].setChecked(1)
+        self.widgets.play_computer.setChecked(main.data['computer'])
+        self.widgets.difficulty_combo.setEnabled(main.data['computer'])
+        self.widgets.difficulty_combo.setCurrentText(f"{main.data['difficulty']}")
+        self.widgets.modes[main.data['gamemode']].setChecked(1)
 
-        data['update_screen']('Start')
+        main.updateScreen('Start')
     
-    def subscribe(self, **kwargs):
-        self.widgets.ok.clicked.connect(lambda: self.save_changes(kwargs['update_screen']))
-        self.widgets.cancel.clicked.connect(lambda: self.cancel_changes(**kwargs))
+    def subscribe(self, main):
+        self.widgets.ok.clicked.connect(lambda: self.save_changes(main))
+        self.widgets.cancel.clicked.connect(lambda: self.cancel_changes(main))
         self.widgets.play_computer.stateChanged.connect(lambda state: self.widgets.difficulty_combo.setEnabled(state == Qt.Checked))
         for i,slider in enumerate(self.widgets.sliders):
             slider.valueChanged.connect(lambda value, index_=i: self.widgets.sliderlabels[index_][1].setText(str(value)))

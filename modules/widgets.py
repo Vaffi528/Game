@@ -2,8 +2,9 @@ from .package import *
 
 class SharedWidgets():
     def __init__(self, **kwargs):
-        #font
+        #style
         self.font = QtGui.QFont("monospace", 12)
+        self.sticks_style = Path('style/stickbutton.css').read_text()
 
         #create push buttons
         ##greet
@@ -14,17 +15,30 @@ class SharedWidgets():
         ##settings
         self.ok = QPushButton("Ok")
         self.cancel = QPushButton("Cancel")
+        ##play
+        self.pause = QPushButton("||")
+        self.sticks = []
+        for i in range(50):
+            btn = QPushButton()
+            btn.setStyleSheet(self.sticks_style)
+            self.sticks.append(btn)
+        self.update_sticks(kwargs['n'])
+        ##pause
+        self.continue_ = QPushButton("Continue")
+        self.endgame = QPushButton("End Game")
 
         #create check boxes 
         ##settings
         self.play_computer = QCheckBox("Play against the computer")
         self.play_computer.setChecked(kwargs['computer'])
+        
         #create sliders
         ##settings
         self.sliders = [self.create_slider(5,50,kwargs['n']),
                         self.create_slider(5,kwargs['n'],kwargs['k']),
                         self.create_slider(2,kwargs['b'],kwargs['a']),
                         self.create_slider(kwargs['a'],kwargs['n'],kwargs['b'])]
+        
         #create labels
         ##settings
         self.difficulty_lvl = QLabel("Level of difficulty")
@@ -33,6 +47,7 @@ class SharedWidgets():
                             self.create_labels_for_sliders(5,kwargs['n'],kwargs['k'],'Max amount of sticks for one pick'),
                             self.create_labels_for_sliders(2,kwargs['b'],kwargs['a'],'Min amount of sticks in for one pick in a row'),
                             self.create_labels_for_sliders(kwargs['a'],kwargs['n'],kwargs['b'],'Max amount of sticks in for one pick in a row')]
+        
         #create combo boxes
         ##settings
         self.difficulty_combo = QComboBox()
@@ -77,6 +92,11 @@ class SharedWidgets():
                 label.setFont(self.font)
         self.ok.setFont(self.font)
         self.cancel.setFont(self.font)
+        ##play
+        self.pause.setStyleSheet("font-size: 16px;")
+        ##pause
+        self.continue_.setFont(self.font)
+        self.endgame.setFont(self.font)
 
     def create_slider(self, min_val, max_val, curr_val) -> QSlider:
         slider = QSlider(Qt.Horizontal)
@@ -92,3 +112,13 @@ class SharedWidgets():
         maxlabel = QLabel(f'{max_val}')
         titlelabel = QLabel(f'{text}')
         return [minlabel, currlabel, maxlabel, titlelabel]
+
+    # this method is calling in initialization and in case of updating "n" value (by ok button), interrrupting game (by end game button) or ending the game 
+    def update_sticks(self, n):
+        for i in range(50): 
+            self.sticks[i].show()
+            self.sticks[i].setDisabled(0)
+
+        for i in range(49,n-1,-1): 
+            self.sticks[i].hide()
+        

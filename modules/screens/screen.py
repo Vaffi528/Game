@@ -15,3 +15,6 @@ class Screen(QWidget):
 
     def setposition(self) -> None:
         pass
+
+    def subscribe(self, main) -> None:
+        pass
