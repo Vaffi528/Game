@@ -40,6 +40,7 @@ class Main(QWidget):
             with open('data/data.json', "r", encoding='utf-8') as file:
                 return json.load(file)
         except json.decoder.JSONDecodeError:
+            print('json.decoder.JSONDecodeError! Resetting data to standart values...')
             data = {'n': 5, 'k': 5, 'a': 2, 'b': 2, 
                     'computer': 0, 'difficulty':1, 'gamemode':4, }
             with open('data/data.json', "w", encoding='utf-8') as file:
@@ -47,7 +48,9 @@ class Main(QWidget):
             return data
 
     def run(self, app):
-        self.widgets.subscribe(self.updateScreen)
+        for screen in list(self.screens.values()):
+            screen.subscribe(update_screen=self.updateScreen, **self.data)
+
         self.setLayout(self.stacked_layout)
         self.show()
         app.exec_()

@@ -23,3 +23,8 @@ class GreetScreen(Screen):
         grid.addWidget(self.widgets.exit, 3,0)
         self.layout_.addLayout(grid)
         self.setLayout(self.layout_)
+
+    def subscribe(self, **kwargs):
+        self.widgets.play.clicked.connect(lambda: kwargs['update_screen'](self.widgets.play.text()))
+        self.widgets.settings.clicked.connect(lambda: kwargs['update_screen'](self.widgets.settings.text()))
+        self.widgets.exit.clicked.connect(sys.exit)

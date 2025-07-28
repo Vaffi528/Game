@@ -12,15 +12,6 @@ class SettingsScreen(Screen):
         self.widgets.cancel.setMaximumSize(w, h)
 
     def setposition(self) -> None:
-        '''self.layout_ = QVBoxLayout()
-        self.layouth = QHBoxLayout()
-        self.gridbutts = QGridLayout()
-        self.layout_.addWidget(self.widgets.nslider)
-        self.layouth.addWidget(self.widgets.ok)
-        self.layouth.addWidget(self.widgets.cancel)
-        self.layout_.addLayout(self.layouth)
-        self.setLayout(self.layout_)'''
-    
         self.layout_ = QVBoxLayout()
         self.layout_.setContentsMargins(20, 20, 20, 20)
         self.layout_.setSpacing(15)
@@ -70,3 +61,69 @@ class SettingsScreen(Screen):
         self.layout_.addLayout(button_layout)
         
         self.setLayout(self.layout_)
+
+    def change_nslider(self, value):
+        for i in [1,3]:
+            self.widgets.sliders[i].setMaximum(value)
+            self.widgets.sliderlabels[i][2].setText(str(value))
+            if self.widgets.sliders[i].value() > value:
+                self.widgets.sliders[i].setValue(value)
+                
+        
+        bslider_value = self.widgets.sliders[3].value()
+        if bslider_value < int(self.widgets.sliderlabels[2][2].text()):
+            self.widgets.sliders[2].setMaximum(bslider_value)
+            self.widgets.sliders[3].setMinimum(bslider_value)
+            self.widgets.sliderlabels[3][0].setText(str(bslider_value))
+            self.widgets.sliderlabels[2][2].setText(str(bslider_value))
+            if self.widgets.sliders[2].value() > bslider_value:
+                self.widgets.sliders[2].setValue(bslider_value)
+    
+    def change_aslider(self, value):
+        self.widgets.sliders[3].setMinimum(value)
+        self.widgets.sliderlabels[3][0].setText(str(value))
+    
+    def change_bslider(self, value):
+        self.widgets.sliders[2].setMaximum(value)
+        self.widgets.sliderlabels[2][2].setText(str(value))
+        if self.widgets.sliders[2].value() > value:
+            self.widgets.sliders[2].setValue(value)
+
+    def save_changes(self, update_screen):
+        data = dict()
+        for i, key in enumerate(['n', 'k', 'a','b']):
+            data[key]=self.widgets.sliders[i].value()
+        data['computer']=self.widgets.play_computer.isChecked()
+        data['difficulty'] = int(self.widgets.difficulty_combo.currentText())
+        
+        data['gamemode'] = self.widgets.modes.index(self.widgets.mode_group.checkedButton())
+        with open('data/data.json', "w", encoding='utf-8') as file:
+            json.dump(data, file)
+
+        update_screen('Ok')
+
+    def cancel_changes(self, **data):
+        for i, key in enumerate(['n', 'k', 'a','b']):
+            self.widgets.sliders[i].setValue(data[key])
+
+        self.widgets.sliderlabels[1][2].setText(str(data['n']))
+        self.widgets.sliderlabels[2][2].setText(str(data['b']))
+        self.widgets.sliderlabels[3][0].setText(str(data['a']))
+        self.widgets.sliderlabels[3][2].setText(str(data['n']))
+
+        self.widgets.play_computer.setChecked(data['computer'])
+        self.widgets.difficulty_combo.setEnabled(data['computer'])
+        self.widgets.difficulty_combo.setCurrentText(f"{data['difficulty']}")
+        self.widgets.modes[data['gamemode']].setChecked(1)
+
+        data['update_screen']('Start')
+    
+    def subscribe(self, **kwargs):
+        self.widgets.ok.clicked.connect(lambda: self.save_changes(kwargs['update_screen']))
+        self.widgets.cancel.clicked.connect(lambda: self.cancel_changes(**kwargs))
+        self.widgets.play_computer.stateChanged.connect(lambda state: self.widgets.difficulty_combo.setEnabled(state == Qt.Checked))
+        for i,slider in enumerate(self.widgets.sliders):
+            slider.valueChanged.connect(lambda value, index_=i: self.widgets.sliderlabels[index_][1].setText(str(value)))
+        self.widgets.sliders[0].valueChanged.connect(lambda value: self.change_nslider(value))
+        self.widgets.sliders[2].valueChanged.connect(lambda value: self.change_aslider(value))
+        self.widgets.sliders[3].valueChanged.connect(lambda value: self.change_bslider(value))

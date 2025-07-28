@@ -18,7 +18,7 @@ class SharedWidgets():
         #create check boxes 
         ##settings
         self.play_computer = QCheckBox("Play against the computer")
-
+        self.play_computer.setChecked(kwargs['computer'])
         #create sliders
         ##settings
         self.sliders = [self.create_slider(5,50,kwargs['n']),
@@ -92,58 +92,3 @@ class SharedWidgets():
         maxlabel = QLabel(f'{max_val}')
         titlelabel = QLabel(f'{text}')
         return [minlabel, currlabel, maxlabel, titlelabel]
-    
-    def change_nslider(self, value):
-        for i in [1,3]:
-            self.sliders[i].setMaximum(value)
-            self.sliderlabels[i][2].setText(str(value))
-            if self.sliders[i].value() > value:
-                self.sliders[i].setValue(value)
-                
-        
-        bslider_value = self.sliders[3].value()
-        if bslider_value < int(self.sliderlabels[2][2].text()):
-            self.sliders[2].setMaximum(bslider_value)
-            self.sliders[3].setMinimum(bslider_value)
-            self.sliderlabels[3][0].setText(str(bslider_value))
-            self.sliderlabels[2][2].setText(str(bslider_value))
-            if self.sliders[2].value() > bslider_value:
-                self.sliders[2].setValue(bslider_value)
-    
-    def change_aslider(self, value):
-        self.sliders[3].setMinimum(value)
-        self.sliderlabels[3][0].setText(str(value))
-    
-    def change_bslider(self, value):
-        self.sliders[2].setMaximum(value)
-        self.sliderlabels[2][2].setText(str(value))
-        if self.sliders[2].value() > value:
-            self.sliders[2].setValue(value)
-        
-    def save_changes(self, update_screen):
-        data = dict()
-        {"n": 15, "k": 5, "a": 10, "b": 11, "computer": 0, "difficulty": 1, "gamemode": 4}
-        for i, key in enumerate(['n', 'k', 'a','b']):
-            data[key]=self.sliders[i].value()
-        data['computer']=self.play_computer.isChecked()
-        if data['computer']:
-            data['difficulty'] = int(self.difficulty_combo.currentText())
-        
-        data['gamemode'] = self.modes.index(self.mode_group.checkedButton())
-        with open('data/data.json', "w", encoding='utf-8') as file:
-            json.dump(data, file)
-
-        update_screen('Ok')
-
-    def subscribe(self, update_screen):
-        self.play.clicked.connect(lambda: update_screen(self.play.text()))
-        self.settings.clicked.connect(lambda: update_screen(self.settings.text()))
-        self.ok.clicked.connect(lambda: self.save_changes(update_screen))
-        self.cancel.clicked.connect(lambda: update_screen('Start'))
-        self.exit.clicked.connect(sys.exit)
-        self.play_computer.stateChanged.connect(lambda state: self.difficulty_combo.setEnabled(state == Qt.Checked))
-        for i,slider in enumerate(self.sliders):
-            slider.valueChanged.connect(lambda value, index_=i: self.sliderlabels[index_][1].setText(str(value)))
-        self.sliders[0].valueChanged.connect(lambda value: self.change_nslider(value))
-        self.sliders[2].valueChanged.connect(lambda value: self.change_aslider(value))
-        self.sliders[3].valueChanged.connect(lambda value: self.change_bslider(value))
