@@ -1,5 +1,13 @@
 from .package import *
 
+#disable space button
+class QPushButton(QPushButton):
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Space:
+            event.ignore()
+        else:
+            super().keyPressEvent(event)
+
 class SharedWidgets():
     def __init__(self, **kwargs):
         #style
@@ -17,15 +25,25 @@ class SharedWidgets():
         self.cancel = QPushButton("Cancel")
         ##play
         self.pause = QPushButton("||")
+        self.pause.setAutoDefault(False)
+        self.pause.setDefault(False)
         self.sticks = []
         for i in range(50):
             btn = QPushButton()
             btn.setStyleSheet(self.sticks_style)
+            btn.setAutoDefault(False)
+            btn.setDefault(False)
+            if i > kwargs['n']-1:
+                btn.hide()
             self.sticks.append(btn)
-        self.update_sticks(kwargs['n'])
+        self.next = QPushButton('Next')
+        self.next.setDisabled(1)
         ##pause
         self.continue_ = QPushButton("Continue")
         self.endgame = QPushButton("End Game")
+        ##end
+        self.quit = QPushButton("Quit")
+
 
         #create check boxes 
         ##settings
@@ -47,7 +65,11 @@ class SharedWidgets():
                             self.create_labels_for_sliders(5,kwargs['n'],kwargs['k'],'Max amount of sticks for one pick'),
                             self.create_labels_for_sliders(2,kwargs['b'],kwargs['a'],'Min amount of sticks in for one pick in a row'),
                             self.create_labels_for_sliders(kwargs['a'],kwargs['n'],kwargs['b'],'Max amount of sticks in for one pick in a row')]
-        
+        ##play
+        self.queue = QLabel("1 Player turn")
+        ##end
+        self.winner = QLabel()
+
         #create combo boxes
         ##settings
         self.difficulty_combo = QComboBox()
@@ -94,9 +116,32 @@ class SharedWidgets():
         self.cancel.setFont(self.font)
         ##play
         self.pause.setStyleSheet("font-size: 16px;")
+        self.next.setFont(QtGui.QFont("monospace", 20))
+        self.queue.setFont(QtGui.QFont("monospace", 18))
         ##pause
         self.continue_.setFont(self.font)
         self.endgame.setFont(self.font)
+        ##end
+        self.quit.setFont(self.font)
+        self.winner.setFont(QtGui.QFont("monospace", 28))
+
+        #shortcuts
+        ##greet
+        self.exit_short = QAction('Exit')
+        self.exit_short.setShortcut('Esc')
+        ##play
+        self.pause_short = QAction('Pause')
+        self.pause_short.setShortcut('Esc')
+        self.next_short = QAction('Next')
+        self.next_short.setShortcut('Space')
+        ##pause
+        self.end_short = QAction('End')
+        self.end_short.setShortcut('Esc')
+        self.continue_short = QAction('Continue')
+        self.continue_short.setShortcut('Space')
+        ##quit
+        self.quit_short = QAction('Quit')
+        self.quit_short.setShortcut('Esc')
 
     def create_slider(self, min_val, max_val, curr_val) -> QSlider:
         slider = QSlider(Qt.Horizontal)

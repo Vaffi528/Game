@@ -3,6 +3,7 @@ from .screens.greetscreen import GreetScreen
 from .screens.settingsscreen import SettingsScreen
 from .screens.playscreen import PlayScreen
 from .screens.pausescreen import PauseScreen
+from .screens.endscreen import EndScreen
 from .widgets import SharedWidgets
 
 class Main(QWidget):
@@ -18,8 +19,9 @@ class Main(QWidget):
         self.screens = {'Start': GreetScreen(self.widgets, self.width(), self.height()),
                         'Settings': SettingsScreen(self.widgets, self.width(), self.height()),
                         'Play': PlayScreen(self.widgets, self.width(), self.height()),
-                        '||':PauseScreen(self.widgets, self.width(), self.height())}
-        self.indexes = {'Start': 0, 'Settings': 1, 'Play': 2, '||': 3,}
+                        '||':PauseScreen(self.widgets, self.width(), self.height()),
+                        'End':EndScreen(self.widgets, self.width(), self.height())}
+        self.indexes = {'Start': 0, 'Settings': 1, 'Play': 2, '||': 3, 'End': 4}
         self.current_screen = 'Start'
         self.stacked_layout = QStackedLayout()
         for widget in list(self.screens.values()):

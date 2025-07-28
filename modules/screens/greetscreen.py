@@ -28,3 +28,6 @@ class GreetScreen(Screen):
         self.widgets.play.clicked.connect(lambda: main.updateScreen(self.widgets.play.text()))
         self.widgets.settings.clicked.connect(lambda: main.updateScreen(self.widgets.settings.text()))
         self.widgets.exit.clicked.connect(sys.exit)
+
+        self.widgets.exit_short.triggered.connect(sys.exit)
+        self.addAction(self.widgets.exit_short)
