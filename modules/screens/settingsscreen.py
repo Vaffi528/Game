@@ -19,7 +19,10 @@ class SettingsScreen(Screen):
         #Play against computer checkbox
         self.layout_.addWidget(self.widgets.play_computer)
         
-        #Difficulty level (disabled when checkbox unchecked)
+        #Computer's turn first (disabled when 1st checkbox unchecked)
+        self.layout_.addWidget(self.widgets.play_computer_turn)
+        
+        #Difficulty level (disabled when 1st checkbox unchecked)
         difficulty_layout = QHBoxLayout()
         difficulty_layout.addWidget(self.widgets.difficulty_lvl)
         
@@ -94,6 +97,7 @@ class SettingsScreen(Screen):
             main.data[key]=self.widgets.sliders[i].value()
 
         main.data['computer']=self.widgets.play_computer.isChecked()
+        main.data['computer_turn']=self.widgets.play_computer_turn.isChecked()
         main.data['difficulty'] = int(self.widgets.difficulty_combo.currentText())
         main.data['gamemode'] = self.widgets.modes.index(self.widgets.mode_group.checkedButton())
         
@@ -112,7 +116,9 @@ class SettingsScreen(Screen):
         self.widgets.sliderlabels[3][2].setText(str(main.data['n']))
 
         self.widgets.play_computer.setChecked(main.data['computer'])
+        self.widgets.play_computer_turn.setChecked(main.data['computer_turn'])
         self.widgets.difficulty_combo.setEnabled(main.data['computer'])
+        self.widgets.play_computer_turn.setEnabled(main.data['computer'])
         self.widgets.difficulty_combo.setCurrentText(f"{main.data['difficulty']}")
         self.widgets.modes[main.data['gamemode']].setChecked(1)
 
@@ -122,6 +128,8 @@ class SettingsScreen(Screen):
         self.widgets.ok.clicked.connect(lambda: self.save_changes(main))
         self.widgets.cancel.clicked.connect(lambda: self.cancel_changes(main))
         self.widgets.play_computer.stateChanged.connect(lambda state: self.widgets.difficulty_combo.setEnabled(state == Qt.Checked))
+        self.widgets.play_computer.stateChanged.connect(lambda state: self.widgets.play_computer_turn.setEnabled(state == Qt.Checked))
+
         for i,slider in enumerate(self.widgets.sliders):
             slider.valueChanged.connect(lambda value, index_=i: self.widgets.sliderlabels[index_][1].setText(str(value)))
         self.widgets.sliders[0].valueChanged.connect(lambda value: self.change_nslider(value))

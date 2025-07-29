@@ -22,6 +22,7 @@ class PauseScreen(Screen):
 
     def endgame(self, main):
         self.widgets.update_sticks(main.data['n'])
+        main.screens['Play'].reset_data(main)
         self.widgets.next.setDisabled(1)
         
     def subscribe(self, main):

@@ -7,16 +7,16 @@ class EndScreen(Screen):
     
     def setsize(self, width, height) -> None:
         w, h = int(width*0.4), int(height*0.15)
-        self.widgets.quit.setMaximumSize(w, h)
+        self.widgets.quit.setFixedSize(w, h)
 
     def setposition(self) -> None:
         #set all elements on the screen
         self.layout_ = QVBoxLayout()
-        grid = QGridLayout()
-        grid.setSpacing(int(self.widgets.continue_.size().height()/0.15*0.125))
-        grid.addWidget(self.widgets.winner, 0,0)
-        grid.addWidget(self.widgets.quit, 1,0)
-        self.layout_.addLayout(grid)
+        self.layout_.setSpacing(int(self.widgets.continue_.size().height()/0.15*0.125))
+        self.layout_.addStretch(1)
+        self.layout_.addWidget(self.widgets.winner, alignment=Qt.AlignHCenter)
+        self.layout_.addWidget(self.widgets.quit, alignment=Qt.AlignHCenter)
+        self.layout_.addStretch(1)
         self.setLayout(self.layout_)
         
     def subscribe(self, main):

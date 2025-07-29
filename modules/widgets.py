@@ -49,6 +49,9 @@ class SharedWidgets():
         ##settings
         self.play_computer = QCheckBox("Play against the computer")
         self.play_computer.setChecked(kwargs['computer'])
+        self.play_computer_turn = QCheckBox("Computer's turn first")
+        self.play_computer_turn.setChecked(kwargs['computer_turn'])
+        self.play_computer_turn.setEnabled(kwargs['computer'])
         
         #create sliders
         ##settings
@@ -68,7 +71,7 @@ class SharedWidgets():
         ##play
         self.queue = QLabel("1 Player turn")
         ##end
-        self.winner = QLabel()
+        self.winner = QLabel("i Player win!")
 
         #create combo boxes
         ##settings
@@ -106,6 +109,7 @@ class SharedWidgets():
         self.exit.setFont(self.font)
         ##settings
         self.play_computer.setFont(self.font)
+        self.play_computer_turn.setFont(self.font)
         self.difficulty_lvl.setFont(self.font)
         self.difficulty_combo.setFont(self.font)
         self.game_rules.setFont(self.font)
