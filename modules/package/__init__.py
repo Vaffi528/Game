@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QSlider, QDialogButtonBox, QTabWidget, QWidget,
                             QGridLayout, QDesktopWidget, QStackedLayout, QRadioButton, QButtonGroup)
 from PyQt5 import QtGui
 from PyQt5.QtGui import QKeySequence, QKeyEvent
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 import json
 import copy
 import sys

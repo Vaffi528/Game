@@ -71,6 +71,7 @@ class SharedWidgets():
         ##play
         self.queue = QLabel("1 Player turn")
         ##end
+        self.screen_ = QLabel()
         self.winner = QLabel("i Player win!")
 
         #create combo boxes

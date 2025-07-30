@@ -1,37 +1,52 @@
 from random import randint
 
-class Rule1Mode:
+class Rule2Mode:
     def rule_logic(playscreen, main):
         playscreen.picked_stickes += 1
         playscreen.total_quantity += 1
+
         if playscreen.total_quantity == main.data['n']:
             playscreen.reset(main)
             return
-        if not playscreen.widgets.next.isEnabled():
+
+        if playscreen.picked_stickes == main.data['a']:
             playscreen.widgets.next.setDisabled(0)
-        if playscreen.picked_stickes == main.data['k']:
-            Rule1Mode.update_turn_data(playscreen, main)
-            
-    def update_turn_data(playscreen, main=None, fl=False):
+        if playscreen.picked_stickes == main.data['b']:
+            Rule2Mode.update_turn_data(playscreen, main)
+    
+    def update_turn_data(playscreen, main, fl=True):
         playscreen.turn = not playscreen.turn
         playscreen.widgets.queue.setText(f'{playscreen.turn+1} Player turn')
         playscreen.widgets.next.setDisabled(1)
         playscreen.picked_stickes = 0
-        if main:
+        if (main.data['n'] - playscreen.total_quantity) < main.data['a']:
+            playscreen.turn = not playscreen.turn
+            playscreen.reset(main)
+            return
+        if fl:
             playscreen.subscribe_computer(main)
 
     def mode(all_sticks: list, playscreen, main, c) -> None:
         r = main.data['n']
-        k = main.data['k']
+        a = main.data['a']
+        b = main.data['b']
 
         for stick in all_sticks:
             if not stick.isEnabled():
                 r -= 1
-        if c == 1:
-            sticks = randint(1,k) if r % (k+1) == 0 else r % (k+1)
+        
+        remainder = (r % (a+b))
+        if remainder < a:
+            sticks = a 
+        elif remainder > b:
+            sticks = b 
         else:
+            sticks = remainder
+
+        if c != 1:
             chance = randint(c-1,7)
-            sticks = randint(1,k) if (r % (k+1) == 0 or chance == 7) else r % (k+1)
+            if chance == 7:
+                sticks = randint(a,b)
 
         for stick in all_sticks:
             if stick.isEnabled():
@@ -42,6 +57,5 @@ class Rule1Mode:
                     playscreen.reset(main)
                     return
             if sticks == 0:
-                Rule1Mode.update_turn_data(playscreen)
+                Rule2Mode.update_turn_data(playscreen, main, False)
                 return 
-    
