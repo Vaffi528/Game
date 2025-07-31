@@ -24,6 +24,7 @@ class PauseScreen(Screen):
         self.widgets.update_sticks(main.data['n'])
         main.screens['Play'].reset_data(main)
         main.screens['Play'].RULES[2].self_turn = False
+        main.screens['Play'].RULES[2].index = None
         self.widgets.next.setDisabled(1)
         
     def subscribe(self, main):
