@@ -46,7 +46,7 @@ class Main(QWidget):
         except json.decoder.JSONDecodeError:
             print('json.decoder.JSONDecodeError! Resetting data to standart values...')
             data = {'n': 5, 'k': 5, 'a': 2, 'b': 2, 
-                    'computer': 0, 'computer_turn': 0, 'difficulty':1, 'gamemode':4, }
+                    'computer': 0, 'computer_turn': 0, 'difficulty':1, 'gamemode':0, }
             with open('data/data.json', "w", encoding='utf-8') as file:
                 json.dump(data, file)
             return data

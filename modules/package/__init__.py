@@ -7,6 +7,5 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QKeySequence, QKeyEvent
 from PyQt5.QtCore import Qt, QTimer
 import json
-import copy
 import sys
 from pathlib import Path 
