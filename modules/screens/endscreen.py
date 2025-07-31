@@ -20,14 +20,10 @@ class EndScreen(Screen):
         self.layout_.addStretch(1)
         self.setLayout(self.layout_)
     
-    def quit(self,main):
-        main.screens['Play'].reset_data(main)
-        main.updateScreen('Start')
-
     def subscribe(self, main):
 
-        self.widgets.quit.clicked.connect(lambda: self.quit(main))
+        self.widgets.quit.clicked.connect(lambda: main.updateScreen('Start'))
 
-        self.widgets.quit_short.triggered.connect(lambda: self.quit(main))
+        self.widgets.quit_short.triggered.connect(lambda: main.updateScreen('Start'))
         self.addAction(self.widgets.quit_short)
         

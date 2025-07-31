@@ -2,8 +2,7 @@ from modules.package import *
 from .screen import Screen
 from modules.computer_modes.rule1 import Rule1Mode
 from modules.computer_modes.rule2 import Rule2Mode
-
-RULES = [Rule1Mode, Rule2Mode]
+from modules.computer_modes.rule3 import Rule3Mode
 
 class PlayScreen(Screen):
     def __init__(self, widgets, width, height):
@@ -11,9 +10,10 @@ class PlayScreen(Screen):
         self.turn = 0
         self.picked_stickes = 0
         self.total_quantity = 0
-        self.gamemode = [RuleMode.rule_logic for RuleMode in RULES]
-        self.computer_gamemode = [RuleMode.mode for RuleMode in RULES]
-        self.update_gamemode = [RuleMode.update_turn_data for RuleMode in RULES]
+        self.RULES = [Rule1Mode, Rule2Mode, Rule3Mode()]
+        self.gamemode = [RuleMode.rule_logic for RuleMode in self.RULES]
+        self.computer_gamemode = [RuleMode.mode for RuleMode in self.RULES]
+        self.update_gamemode = [RuleMode.update_turn_data for RuleMode in self.RULES]
     
     def setsize(self, width, height) -> None:
         self.widgets.pause.setFixedSize(int(height/25.75), int(height/25.75))
@@ -43,7 +43,7 @@ class PlayScreen(Screen):
     
     def subscribe_computer(self, main):
         if main.data['computer']:
-            self.computer_gamemode[main.data['gamemode']](self.widgets.sticks, self, main, main.data['difficulty'])
+            self.computer_gamemode[main.data['gamemode']](self.widgets.sticks[:main.data['n']], self, main, main.data['difficulty'])
     
     def subscribe_computer_turn(self,main):
         if main.data['computer_turn']:
@@ -65,7 +65,8 @@ class PlayScreen(Screen):
         Qt.SmoothTransformation
         )
         self.widgets.screen_.setPixmap(pixmap)
-        
+
+        self.reset_data(main)
         main.updateScreen('End')
         
     def reset_data(self, main):
@@ -82,7 +83,7 @@ class PlayScreen(Screen):
 
         for i, stick in enumerate(self.widgets.sticks):
             stick.clicked.connect(lambda value, ind=i: self.widgets.sticks[ind].setDisabled(1))
-            stick.clicked.connect(lambda: self.gamemode[main.data['gamemode']](self, main))
+            stick.clicked.connect(lambda value, ind=i: self.gamemode[main.data['gamemode']](self, main, ind))
         
 
         self.widgets.next.clicked.connect(lambda: self.update_turn(main))

@@ -1,7 +1,7 @@
 from random import randint
 
 class Rule2Mode:
-    def rule_logic(playscreen, main):
+    def rule_logic(playscreen, main, ind=0):
         playscreen.picked_stickes += 1
         playscreen.total_quantity += 1
 
@@ -38,14 +38,17 @@ class Rule2Mode:
         remainder = (r % (a+b))
         if remainder < a:
             sticks = a 
+            if remainder == 0:
+                sticks = randint(a,b)
         elif remainder > b:
             sticks = b 
         else:
             sticks = remainder
 
         if c != 1:
-            chance = randint(c-1,7)
-            if chance == 7:
+            adjustment = {12:0, 11:0, 10:1, 9:1, 8:2, 7:2, 6:3, 5:3, 4:3, 3:4, 2:4, 1:4, 0:4}
+            chance = randint(1, 10 - adjustment[main.data['n']//(a+b)])
+            if chance in range(1, c+1):
                 sticks = randint(a,b)
 
         for stick in all_sticks:
